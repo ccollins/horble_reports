@@ -55,6 +55,13 @@ def merge_data(m1, m2, mrh, rh1, rh2):
     
 def merge_rows(rh1, rh2):
     return tuple(sorted(set(rh1 + rh2)))
+
+def transpose(m):
+    transposed_m = [[] for i in range(len(m[0]))]
+    for row in m:
+        for i, v in enumerate(row):
+            transposed_m[i].append(v)
+    return transposed_m
         
 def transpose_column(matrix, key):    
     return tuple([row[key] for row in matrix])
@@ -180,14 +187,10 @@ class Report(object):
         return self.data_matrix
         
     def prepend_row_headers(self):
-        row_headers = [[] for i in range(len(self.row_header_label))]
-        for row in self.row_headers:
-            for key, header in enumerate(row):
-                row_headers[key].append(header)
-
-        row_headers.reverse()
-        for row in row_headers:
-            self.data_matrix = prepend_column(self.data_matrix, tuple(row))
+        row_header_columns = transpose(self.row_headers)
+        row_header_columns.reverse()
+        for column in row_header_columns:
+            self.data_matrix = prepend_column(self.data_matrix, tuple(column))
         
     def __add__(self, other):
         return Report(self.row_header_label, *merge_matrices((self.row_headers, self.column_headers, self.data_matrix), 
