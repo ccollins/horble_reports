@@ -187,10 +187,11 @@ class Report(object):
         return self.data_matrix
         
     def prepend_row_headers(self):
-        row_header_columns = transpose(self.row_headers)
-        row_header_columns.reverse()
-        for column in row_header_columns:
-            self.data_matrix = prepend_column(self.data_matrix, tuple(column))
+        if self.row_headers:
+            row_header_columns = transpose(self.row_headers)
+            row_header_columns.reverse()
+            for column in row_header_columns:
+                self.data_matrix = prepend_column(self.data_matrix, tuple(column))
         
     def __add__(self, other):
         return Report(self.row_header_label, *merge_matrices((self.row_headers, self.column_headers, self.data_matrix), 
