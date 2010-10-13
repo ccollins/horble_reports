@@ -1,11 +1,9 @@
-from sets import Set
-    
 def replace_into_tuple(matrix, value, position):
     return matrix[0:position] + (value,) + matrix[(position + 1):len(matrix)]
     
 def _build_matrix(ds, row_key, column_key, value_key, default_value=0):
-    row_headers = Set()
-    column_headers = Set()
+    row_headers = set()
+    column_headers = set()
     value_dict = {}
 
     for row in ds:
