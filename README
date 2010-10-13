@@ -1,4 +1,0 @@
-Python report generation.  If you are here, I'm sorry.
-
-Development use:
-pip install -E horble_reports -e git+ssh://git@github.com/ccollins/horble_reports.git#egg=horble_reports
