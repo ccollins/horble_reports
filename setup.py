@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 setup(
-    name = "horble_reports",
+    name = "horble-reports",
     version = "1.0",
     packages = ['horble_reports']
 )
