@@ -68,7 +68,10 @@ def reduce_rows(matrix, transform):
     return tuple([transform(row) for row in matrix])
 
 def reduce_columns(matrix, transform):
-    return tuple([transform(transpose_column(matrix, key)) for key in range(len(matrix[0]))])
+    c = ()
+    if len(matrix) > 0:
+        c = tuple([transform(transpose_column(matrix, key)) for key in range(len(matrix[0]))])
+    return c
 
 def append_row(matrix, row):
     return matrix + (row,)

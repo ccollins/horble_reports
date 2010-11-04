@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="horble_reports",
-    version="1.0.1",
+    version="1.0.2",
     packages = ["horble_reports"],
     author="Chuck Collins, Wilkes Joiner",
     author_email="chuck.collins@gmail.com",

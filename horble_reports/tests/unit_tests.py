@@ -140,12 +140,24 @@ class ReportTest(BaseReportTest):
         
         self.assertEquals(expected, hr.append_column(ds, column))
         
+    def test_sum_columns_no_data(self):
+        ds = ()
+        expected = ()
+        
+        self.assertEquals(expected, hr.reduce_columns(ds, sum))
+        
     def test_sum_columns(self):
         ds = ((1, 2, 3), (4, 5, 6), (7, 8, 9))
         expected = (12, 15, 18)
         
         self.assertEquals(expected, hr.reduce_columns(ds, sum))
         
+    def test_average_columns_no_data(self):
+        ds = ()
+        expected = ()
+        
+        self.assertEquals(expected, hr.reduce_columns(ds, lambda x: sum(x)/len(x)))
+
     def test_average_columns(self):
         ds = ((1, 2, 3), (4, 5, 6), (7, 8, 9))
         expected = (4, 5, 6)
@@ -200,27 +212,23 @@ class ReportTest(BaseReportTest):
         self.assertEquals(expected_values, data_matrix)
         
     def test_transpose_tuple(self):
-        data_set = [
-                ['internet', 'apple'  , 1, 4],
-                ['internet', 'ms'     , 1, 5],
-                ['internet', 'apple'  , 2, 7],
-                ['internet', 'linux'  , 2, 1],
-                ['internet', 'ms'     , 2, 3],
-                ['tv'      , 'sony'   , 1, 2],
-                ['tv'      , 'toshiba', 1, 7],
-                ['tv'      , 'jvc'    , 1, 4],
-                ['tv'      , 'sony'   , 2, 8],
-                ['tv'      , 'toshiba', 2, 3],
-        ]
+        data_set =  (
+                ('internet' , 'apple'    , 1    , 7    ),
+                ('internet' , 'linux'    , 1    , 1    ),
+                ('internet' , 'ms'       , 2    , 3    ),
+                ('tv'       , 'jvc'      , 2    , 0    ),
+                ('tv'       , 'sony'     , 2    , 8    ),
+                ('tv'       , 'toshiba'  , 1    , 3    ),
+        )
             
         expected_report = (
                 ('Marketing', "Specialty", "Jan", "Feb"),
-                ('internet' , 'apple'    , 4    , 7    ),
-                ('internet' , 'linux'    , 0    , 1    ),
-                ('internet' , 'ms'       , 5    , 3    ),
-                ('tv'       , 'jvc'      , 4    , 0    ),
-                ('tv'       , 'sony'     , 2    , 8    ),
-                ('tv'       , 'toshiba'  , 7    , 3    ),
+                ('internet' , 'apple'    , 7    , 0    ),
+                ('internet' , 'linux'    , 1    , 0    ),
+                ('internet' , 'ms'       , 0    , 3    ),
+                ('tv'       , 'jvc'      , 0    , 0    ),
+                ('tv'       , 'sony'     , 0    , 8    ),
+                ('tv'       , 'toshiba'  , 3    , 0    ),
         )
             
         report = hr.report_builder(data_set=data_set, 
@@ -230,6 +238,18 @@ class ReportTest(BaseReportTest):
                               value_key=lambda x:x[3],
                               header_converter=lambda i: calendar.month_abbr[i])
         self.assertEquals(expected_report, report.format())
+        
+    def test_create_report_with_raw_data(self):
+        data_set = ()
+        expected_report = (
+                ('Marketing', "Specialty", "Jan", "Feb"),
+                ('internet' , 'apple'    , 4    , 7    ),
+                ('internet' , 'linux'    , 0    , 1    ),
+                ('internet' , 'ms'       , 5    , 3    ),
+                ('tv'       , 'jvc'      , 4    , 0    ),
+                ('tv'       , 'sony'     , 2    , 8    ),
+                ('tv'       , 'toshiba'  , 7    , 3    ),
+        )
             
     def test_transpose_missing(self):
         data_set = [
@@ -245,6 +265,12 @@ class ReportTest(BaseReportTest):
         )
         
         self.assertEquals(expected_report, self.report_for(data_set).format())
+        
+    def test_transform_by_row_total_no_data(self):
+        data_set = []
+        report = self.report_for(data_set)
+        report.add_total_column()
+
         
     def test_transform_by_row_total(self):
         data_set = [
@@ -265,6 +291,12 @@ class ReportTest(BaseReportTest):
         
         self.assertEquals(expected_report, report.format())
 
+    def test_transform_by_row_total_and_avg_no_data(self):
+        data_set = []
+        report = self.report_for(data_set)
+        report.add_total_column()
+        report.add_average_column()
+        
     def test_transform_by_row_total_and_avg(self):
         data_set = [
             ['internet', 1, 4],
@@ -284,7 +316,11 @@ class ReportTest(BaseReportTest):
 
         self.assertEquals(expected_report, report.format())
 
-     
+    def test_transform_by_row_average_no_data(self):
+        data_set = []
+        report = self.report_for(data_set)
+        report.add_average_column()
+        
     def test_transform_by_row_average(self):
         data_set = [
             ['internet', 1, 4],
@@ -303,6 +339,11 @@ class ReportTest(BaseReportTest):
         )
 
         self.assertEquals(expected_report, report.format())
+        
+    def test_transform_by_column_total_no_data(self):
+        data_set = []
+        report = self.report_for(data_set)
+        report.add_total_row()
         
     def test_transform_by_column_total(self):
         data_set = [
@@ -324,6 +365,11 @@ class ReportTest(BaseReportTest):
         
         self.assertEquals(expected_report, report.format())
 
+    def test_transform_by_column_average_no_data(self):
+        data_set = []
+        report = self.report_for(data_set)
+        report.add_average_row()
+        
     def test_transform_by_column_average(self):
         data_set = [
             ['internet', 1, 4],
@@ -343,6 +389,12 @@ class ReportTest(BaseReportTest):
         )
 
         self.assertEquals(expected_report, report.format())
+        
+    def test_transform_by_column_total_and_avg_no_data(self):
+        data_set = []
+        report = self.report_for(data_set)
+        report.add_total_row()
+        report.add_average_row()
         
     def test_transform_by_column_total_and_avg(self):
         data_set = [
